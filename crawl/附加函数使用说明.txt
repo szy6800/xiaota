@@ -1,0 +1,94 @@
+附加函数的功能主要是为了简化站点配置， 可以把站点配置的规则处理部分一下逻辑封装为函数使用
+附加函数为一段python代码， 里面需要定义一些函数，供set_value动作使用
+注意，如果附加函数代码块中需要使用xt_pub_func中的函数， 需要在函数前面加入 from xt_pub_func import *
+附件函数有统一的模块名为md_site_script， 如果调用其中的函数func1， 则应使用 md_site_script.func1()
+
+推荐用法有两种：
+1. 提供函数，在set_value中使用：
+   #######################################
+   附加函数内容为：
+        import math
+        from xt_pub_func import *
+
+        def test_func(data, n):
+            return calc_md5(data)[:n]
+    
+    #######################################
+    规则内容可以为：
+      "rule": {
+        "pick": {
+          "type": "soup",
+          "pattern": ".vT-srch-result-list li",
+          "sub": {
+            "actions": [
+              {
+                "type": "set_value",
+                "key": "docs.+.url",
+                "expr": "values['soup'].a['href']"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.purl",
+                "expr": "obj['now_req']['url']"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.title",
+                "expr": "values['soup'].a.text.strip()"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.stage",
+                "expr": "values['soup'].span.strong.text.strip()"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.province",
+                "expr": "values['soup'].span.a.text.strip()"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.test_value",
+                "expr": "md_site_script.test_func(values['soup'].a['href'], 8)"
+              }
+            ]
+          }
+        }
+      }
+   
+2. 对复杂的请求， 也可以直接用附加函数一次返回整个构造好的请求：
+   #######################################
+   附加函数内容为：
+        import math
+        from xt_pub_func import *
+
+        def test_func(data, n):
+            return calc_md5(data)[:n]
+            
+        def make_doc_req(values, obj):
+            req = {}
+            req['url'] = values['soup'].a['href']
+            req['purl'] = obj['now_req']['url']
+            req['title'] = values['soup'].a.text.strip()
+            req['stage'] = values['soup'].span.strong.text.strip()
+            req['province'] = values['soup'].span.a.text.strip()
+            req['test_value'] = test_func(values['soup'].a['href'], 8)
+            return req    
+
+    #######################################
+    规则内容可以为：
+      "rule": {
+        "pick": {
+          "type": "soup",
+          "pattern": ".vT-srch-result-list li",
+          "sub": {
+            "actions": [
+              {
+                "type": "set_value",
+                "key": "docs.+",
+                "expr": "md_site_script.make_doc_req(values, obj)"
+              }
+            ]
+          }
+        }
+      }

@@ -1,0 +1,438 @@
+#################################get请求，xpath解析；get请求拼接字符串，正则提取最大页
+{
+  "task_module": "XTC_TASK_STD",
+  "site_para": {
+    "province": "内蒙古自治区",   #省
+    "city": "",         #市
+    "stage": ""         #阶段
+  },
+  "page_list": {
+    "module_name": "XTC_MOD_PAGE_LIST_A",
+    "module_para": {
+      "req": {
+        "url": "http://bid.cncecyc.com/cms/channel/ywgg3jt/index.htm?pageNo=1"  #链接，还可以放encoding，method，data等参数
+    
+      },
+      "rule": {
+        "pick": {               #需要在列表页抓取的参数
+          "type": "xpath",          #解析方式，xpath，soup,re                         
+          "pattern": "//ul[@id=\"list1\"]/li",      #规则
+          "sub": {
+            "actions": [
+              {
+                "type": "set_value",
+                "key": "docs.+.url",            #docs.+.url，创建一个列表第一次用.+.，之后都是.-1.
+                "expr": "str(values['xdata'].xpath('.//a/@href')[0])"   ##soup的写法，"expr": "values['soup']['value']"，re的写法"expr": "int(values['values'])"        
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.purl",
+                "expr": "obj['now_req']['url']"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.title",
+                "expr": "str(values['xdata'].xpath('.//a/text()')[0])"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.pub_date",
+                "expr": "str(values['xdata'].xpath('.//span[@class=\"bidDate\"]/text()')[0])"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "next_page": {
+    "module_name": "XTC_MOD_NEXT_PAGE_FIX_URL",
+    "module_para": {
+      "prefix": "http://bid.cncecyc.com/cms/channel/ywgg3jt/index.htm?pageNo=", #链接拼接，头部
+      "expr": "'%d'%(page)",        #链接拼接，页码部分
+      "postfix": "",            #链接拼接，结尾部分
+      "rule": {
+        "pick": {           #获取最大页码部分
+          "type": "re",         
+          "pattern": "共计<em>(.*?)</em>页",
+          "sub": {
+            "actions": [
+              {
+                "type": "set_value",
+                "key": "info.total_page",
+                "expr": "int(values['values'])"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "content": {
+    "module_para": {
+      "rules": [    #内容中附件提取部分
+        {
+          "picks": [
+            {
+              "type": "xpath",  
+              "pattern": "//a[contains(text(), '.PDF') or contains(text(), '.JPEG') or contains(text(), '.JPG') or contains(text(), '.RAR') or contains(text(), '.DOCX') or contains(text(), '.XLSX') or contains(text(), '.XLS') or contains(text(), '.ZIP') or contains(text(), '.PNG') or contains(text(), '.DOC') or  contains(text(), '.GZSZB') or contains(text(), '.pdf') or contains(text(), '.jpeg') or contains(text(), '.jpg') or contains(text(), '.rar') or contains(text(), '.docx') or contains(text(), '.xlsx') or contains(text(), '.xls') or contains(text(), '.zip') or contains(text(), '.png') or contains(text(), '.doc') or contains(text(), '.GZSZB') or contains(@href,'.pdf') or contains(@href,'.jpeg') or contains(@href,'.jpg') or contains(@href,'.rar') or contains(@href,'.docx') or contains(@href,'.xlsx') or contains(@href,'.xls') or contains(@href,'.zip') or contains(@href,'.png') or contains(@href,'.doc') or contains(@href,'.GZSZB') or contains(@href,'.PDF') or contains(@href,'.JPEG') or contains(@href,'.JPG') or contains(@href,'.RAR') or contains(@href,'.DOCX') or contains(@href,'.XLSX') or contains(@href,'.XLS') or contains(@href,'.ZIP') or contains(@href,'.PNG') or contains(@href,'.DOC')]",
+              "sub": {
+                "not_filter": "javascript:window.close()|javascript:doPrint()|mailto|javascript:downPList()|javascript:void",   #过滤提取的标签包含这些的过滤
+                "actions": [
+                  {
+                    "key": "reqs.+.url",
+                    "type": "set_value",
+                    "expr": "values['xdata'].attrib['href']"
+                  },
+                  {
+                    "key": "reqs.-1.purl",
+                    "type": "set_value",
+                    "expr": "obj['now_req']['url']"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "module_name": "XTC_MOD_CONTENT_STD"
+  }
+}
+#######################get请求，json解析加json解析；get请求拼接字符串，json指定最大页
+{
+  "task_module": "XTC_TASK_STD",
+  "site_para": {
+    "province": "内蒙古自治区",   #省
+    "city": "",         #市
+    "stage": ""         #阶段
+  },
+  "page_list": {
+    "module_name": "XTC_MOD_PAGE_LIST_A",
+    "module_para": {
+      "req": {
+        "url": "http://njggzy.nanjing.gov.cn/webdb_njggzy/fjszListAction.action?cmd=getxqylist&categorynum=067006002&keyword=&winbiddername=&pageIndex=1&pageSize=10"
+      },
+      "rule": {
+        "pick": {
+          "type": "json",
+          "pattern": "jdata['custom']['Table']",
+          "sub": {
+            "actions": [
+              {
+                "type": "set_value",
+                "key": "docs.+.url",
+                "expr": "'http://njggzy.nanjing.gov.cn%s'%(values['jdata']['href'])"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.title",
+                "expr": "values['jdata']['title']"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.pub_date",
+                "expr": "values['jdata']['infodate']"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "next_page": {
+    "module_name": "XTC_MOD_NEXT_PAGE_FIX_URL",
+    "module_para": {
+      "prefix": "http://njggzy.nanjing.gov.cn/webdb_njggzy/fjszListAction.action?cmd=getxqylist&categorynum=067006002&keyword=&winbiddername=&pageIndex=",
+      "expr": "'%d'%(page+1)",
+      "postfix": "&pageSize=10",
+      "rule": {
+        "pick": {
+          "type": "json",
+          "pattern": "jdata['data']['pages']",
+          "sub": {
+            "actions": [
+              {
+                "type": "set_value",
+                "key": "info.total_page",
+                "expr": "int(values['jdata'])-1"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "content": {
+    "module_para": {
+      "rules": [
+        {
+          "picks": [
+            {
+              "type": "xpath",
+              "pattern": "//a[contains(text(), '.PDF') or contains(text(), '.JPEG') or contains(text(), '.JPG') or contains(text(), '.RAR') or contains(text(), '.DOCX') or contains(text(), '.XLSX') or contains(text(), '.XLS') or contains(text(), '.ZIP') or contains(text(), '.PNG') or contains(text(), '.DOC') or  contains(text(), '.GZSZB') or contains(text(), '.pdf') or contains(text(), '.jpeg') or contains(text(), '.jpg') or contains(text(), '.rar') or contains(text(), '.docx') or contains(text(), '.xlsx') or contains(text(), '.xls') or contains(text(), '.zip') or contains(text(), '.png') or contains(text(), '.doc') or contains(text(), '.GZSZB') or contains(@href,'.pdf') or contains(@href,'.jpeg') or contains(@href,'.jpg') or contains(@href,'.rar') or contains(@href,'.docx') or contains(@href,'.xlsx') or contains(@href,'.xls') or contains(@href,'.zip') or contains(@href,'.png') or contains(@href,'.doc') or contains(@href,'.GZSZB') or contains(@href,'.PDF') or contains(@href,'.JPEG') or contains(@href,'.JPG') or contains(@href,'.RAR') or contains(@href,'.DOCX') or contains(@href,'.XLSX') or contains(@href,'.XLS') or contains(@href,'.ZIP') or contains(@href,'.PNG') or contains(@href,'.DOC')]",
+              "sub": {
+                "not_filter": "javascript:window.close()|javascript:doPrint()|mailto|javascript:downPList()|javascript:void",
+                "actions": [
+                  {
+                    "key": "reqs.+.url",
+                    "type": "set_value",
+                    "expr": "values['xdata'].attrib['href']"
+                  },
+                  {
+                    "key": "reqs.-1.purl",
+                    "type": "set_value",
+                    "expr": "obj['now_req']['url']"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "module_name": "XTC_MOD_CONTENT_STD"
+  }
+}
+#######################post请求，参数json,xpath解析；post请求，自定义最大页码
+{
+  "task_module": "XTC_TASK_STD",
+  "site_para": {
+    "province": "内蒙古自治区",   #省
+    "city": "",         #市
+    "stage": ""         #阶段
+  },
+  "page_list": {
+    "module_name": "XTC_MOD_PAGE_LIST_A",
+    "module_para": {
+      "req": {
+        "url": "http://www.ahtba.org.cn/site/trade/affiche/pageList",
+        "encoding": "utf-8",
+        "method": "post",
+        "json": {"pubTime":"","tradeType":"02","tradeClassify":"","regionCode":"","afficheSourceType":"","afficheTitle":"","pageNum":1,"pageSize":10}
+      },
+      "rule": {
+        "pick": {
+          "type": "xpath",
+          "pattern": "//div[@class=\"rightBoxList\"]//li",
+          "sub": {
+            "actions": [
+              {
+                "type": "set_value",
+                "key": "docs.+.url",
+                "expr": "'http://www.ahtba.org.cn/htmlUrl/trade_/'+str(values['xdata'].xpath('.//div[@class=\"fr nums\"]/text()')[0])+'/'+str(values['xdata'].xpath('.//a/@href')[0]).split('/')[-1]+'.html'"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.encoding",
+                "expr": "'utf-8'"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.purl",
+                "expr": "obj['now_req']['url']"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.title",
+                "expr": "str(values['xdata'].xpath('.//a/text()')[0])"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.pub_date",
+                "expr": "str(values['xdata'].xpath('.//div[@class=\"fr nums\"]/text()')[0])"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "next_page": {
+    "module_name": "XTC_MOD_NEXT_PAGE_FIX_URL",
+    "module_para": {
+      "expr": "'http://www.ahtba.org.cn/site/trade/affiche/pageList'",
+      "method": "post",
+      "post_para": {"pubTime":"","tradeType":"02","tradeClassify":"","regionCode":"","afficheSourceType":"","afficheTitle":"","pageNum":1,"pageSize":10},
+      "post_key": "json",
+      "req_expr": "simple_set_key_value(json,'pageNum',page)",
+      "rules": [
+        {
+          "pick": {
+            "type": "xpath",
+            "pattern": "//div[@class=\"rightBoxList\"]//li",
+            "sub": {
+              "actions": [
+                {
+                  "type": "set_value",
+                  "key": "info.total_page",
+                  "expr": "str(values['xdata'].xpath('.//a/text()')[0])"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "content": {
+    "module_para": {
+      "rules": [
+        {
+          "picks": [
+            {
+              "type": "xpath",
+              "pattern": "//a[contains(text(), '.PDF') or contains(text(), '.JPEG') or contains(text(), '.JPG') or contains(text(), '.RAR') or contains(text(), '.DOCX') or contains(text(), '.XLSX') or contains(text(), '.XLS') or contains(text(), '.ZIP') or contains(text(), '.PNG') or contains(text(), '.DOC') or  contains(text(), '.GZSZB') or contains(text(), '.pdf') or contains(text(), '.jpeg') or contains(text(), '.jpg') or contains(text(), '.rar') or contains(text(), '.docx') or contains(text(), '.xlsx') or contains(text(), '.xls') or contains(text(), '.zip') or contains(text(), '.png') or contains(text(), '.doc') or contains(text(), '.GZSZB') or contains(@href,'.pdf') or contains(@href,'.jpeg') or contains(@href,'.jpg') or contains(@href,'.rar') or contains(@href,'.docx') or contains(@href,'.xlsx') or contains(@href,'.xls') or contains(@href,'.zip') or contains(@href,'.png') or contains(@href,'.doc') or contains(@href,'.GZSZB') or contains(@href,'.PDF') or contains(@href,'.JPEG') or contains(@href,'.JPG') or contains(@href,'.RAR') or contains(@href,'.DOCX') or contains(@href,'.XLSX') or contains(@href,'.XLS') or contains(@href,'.ZIP') or contains(@href,'.PNG') or contains(@href,'.DOC')]",
+              "sub": {
+                "not_filter": "javascript:window.close()|javascript:doPrint()|mailto|javascript:downPList()|javascript:void",
+                "actions": [
+                  {
+                    "key": "reqs.+.url",
+                    "type": "set_value",
+                    "expr": "values['xdata'].attrib['href']"
+                  },
+                  {
+                    "key": "reqs.-1.purl",
+                    "type": "set_value",
+                    "expr": "obj['now_req']['url']"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "module_name": "XTC_MOD_CONTENT_STD"
+  }
+}
+#######################post请求，参数data，xpath解析；post请求，正则提取最大页
+{
+  "task_module": "XTC_TASK_STD",
+  "site_para": {
+    "province": "内蒙古自治区",
+    "city": "",
+    "stage": ""
+  },
+  "page_list": {
+    "module_name": "XTC_MOD_PAGE_LIST_A",
+    "module_para": {
+      "req": {
+        "url": "http://ggzyjy.nmg.gov.cn/jyxx/zfcg/cggg",
+        "encoding": "utf-8",
+        "method": "post",
+        "data": {
+          "currentPage": "1",
+          "time": "",
+          "industriesTypeCode": "",
+          "scrollValue": "1083",
+          "bulletinTitle": "",
+          "area": "",
+          "startTime": "",
+          "endTime": ""
+        }
+      },
+      "rule": {
+        "pick": {
+          "type": "xpath",
+          "pattern": "//div[@class=\"content_right fr\"]//tr/td/parent::tr",
+          "sub": {
+            "actions": [
+              {
+                "type": "set_value",
+                "key": "docs.+.url",
+                "expr": "str(values['xdata'].xpath('.//a/@href')[0])"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.encoding",
+                "expr": "'utf-8'"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.purl",
+                "expr": "obj['now_req']['url']"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.title",
+                "expr": "str(values['xdata'].xpath('.//a/@title')[0])"
+              },
+              {
+                "type": "set_value",
+                "key": "docs.-1.pub_date",
+                "expr": "str(values['xdata'].xpath('.//td[4]/text()')[0]).strip()"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "next_page": {
+    "module_name": "XTC_MOD_NEXT_PAGE_FIX_URL",
+    "module_para": {
+      "expr": "'http://ggzyjy.nmg.gov.cn/jyxx/zfcg/cggg'",
+      "method": "post",
+      "post_para": {
+        "currentPage": "1",
+        "time": "",
+        "industriesTypeCode": "",
+        "scrollValue": "1083",
+        "bulletinTitle": "",
+        "area": "",
+        "startTime": "",
+        "endTime": ""
+      },
+      "post_key": "data",
+      "req_expr": "simple_set_key_value(data,'currentPage',page)",
+      "rules": [
+        {
+          "pick": {
+            "type": "re",
+            "pattern": "共(\\d+)页",
+            "sub": {
+              "actions": [
+                {
+                  "type": "set_value",
+                  "key": "info.total_page",
+                  "expr": "int(values['values'])"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "content": {
+    "module_para": {
+      "rules": [
+        {
+          "picks": [
+            {
+              "type": "xpath",
+              "pattern": "//a[contains(text(), '.PDF') or contains(text(), '.JPEG') or contains(text(), '.JPG') or contains(text(), '.RAR') or contains(text(), '.DOCX') or contains(text(), '.XLSX') or contains(text(), '.XLS') or contains(text(), '.ZIP') or contains(text(), '.PNG') or contains(text(), '.DOC') or  contains(text(), '.GZSZB') or contains(text(), '.pdf') or contains(text(), '.jpeg') or contains(text(), '.jpg') or contains(text(), '.rar') or contains(text(), '.docx') or contains(text(), '.xlsx') or contains(text(), '.xls') or contains(text(), '.zip') or contains(text(), '.png') or contains(text(), '.doc') or contains(text(), '.GZSZB') or contains(@href,'.pdf') or contains(@href,'.jpeg') or contains(@href,'.jpg') or contains(@href,'.rar') or contains(@href,'.docx') or contains(@href,'.xlsx') or contains(@href,'.xls') or contains(@href,'.zip') or contains(@href,'.png') or contains(@href,'.doc') or contains(@href,'.GZSZB') or contains(@href,'.PDF') or contains(@href,'.JPEG') or contains(@href,'.JPG') or contains(@href,'.RAR') or contains(@href,'.DOCX') or contains(@href,'.XLSX') or contains(@href,'.XLS') or contains(@href,'.ZIP') or contains(@href,'.PNG') or contains(@href,'.DOC')]",
+              "sub": {
+                "not_filter": "javascript:window.close()|javascript:doPrint()|mailto|javascript:downPList()|javascript:void",
+                "actions": [
+                  {
+                    "key": "reqs.+.url",
+                    "type": "set_value",
+                    "expr": "values['xdata'].attrib['href']"
+                  },
+                  {
+                    "key": "reqs.-1.purl",
+                    "type": "set_value",
+                    "expr": "obj['now_req']['url']"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "module_name": "XTC_MOD_CONTENT_STD"
+  }
+}

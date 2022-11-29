@@ -1,0 +1,186 @@
+Tue Nov 29 10:08:18 2022:	pid: 20256 begin init store
+Tue Nov 29 10:08:18 2022:	pid: 20256 lock task 991 ret=1
+Tue Nov 29 10:08:18 2022:	pid: 20256 begin deal task site_id=991
+Tue Nov 29 10:08:18 2022:	pid: 20256 init task site_id=991 XTC_TASK_STD
+Tue Nov 29 10:08:18 2022:	pid: 20256 call task init site_id=991
+Tue Nov 29 10:08:19 2022:	pid: 20256 site_id=991  begin in task init modules None {'https': 'https://180.120.182.73:4231', 'http': 'http://180.120.182.73:4231'}
+Tue Nov 29 10:08:19 2022:	pid: 20256 site_id=991  end in task init modules 
+Tue Nov 29 10:08:19 2022:	pid: 20256 call task run site_id= 991
+Tue Nov 29 10:08:19 2022:	pid: 20256 site_id=991  in task run
+Tue Nov 29 10:08:19 2022:	pid: 20256 site_id=991  XTC_MOD_PAGE_LIST_A reqs=[
+  {
+    "url": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "encoding": "utf-8"
+  }
+]
+Tue Nov 29 10:08:19 2022:	pid: 20256 site_id=991  XTC_TASK_STD request_url http://www.med.stu.edu.cn/34/list_34_1.html
+Tue Nov 29 10:08:26 2022:	pid: 20256 site_id=991  end get 200 text 18147 http://www.med.stu.edu.cn/34/list_34_1.html
+Tue Nov 29 10:08:26 2022:	pid: 20256 site_id=991  XTC_MOD_PAGE_LIST_A docs=[
+  {
+    "url": "../34/14647.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学•香港中文大学联合汕头国际眼科中心医疗设备维保项目公开招标公告",
+    "pub_date": "2022-11-28"
+  },
+  {
+    "url": "../34/14646.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第一附属医院空气消毒机项目公开招标公告",
+    "pub_date": "2022-11-28"
+  },
+  {
+    "url": "../34/14644.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院公务用车（小车）定点维修服务项目招标公告",
+    "pub_date": "2022-11-25"
+  },
+  {
+    "url": "../34/14643.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院公务用车（大客车）定点维修服务项目招标公告",
+    "pub_date": "2022-11-25"
+  },
+  {
+    "url": "../34/14634.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第二附属医院玻璃雨蓬钢结构维护项目招标公告",
+    "pub_date": "2022-11-25"
+  },
+  {
+    "url": "../34/14633.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第二附属医院麻醉呼吸回路消毒系统采购项目招标公告",
+    "pub_date": "2022-11-25"
+  },
+  {
+    "url": "../34/14631.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第二附属医院采购结算审核招标项目(0724-2230ST645724)中标候选人公示",
+    "pub_date": "2022-11-25"
+  },
+  {
+    "url": "../34/14630.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第二附属医院采购预算审核招标项目(0724-2230ST645714)中标候选人公示",
+    "pub_date": "2022-11-25"
+  },
+  {
+    "url": "../34/14629.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第二附属医院输液信息采集系统采购项目中标结果公告",
+    "pub_date": "2022-11-24"
+  },
+  {
+    "url": "../34/14628.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第二附属医院特定(单)病种质量监测智能语义分析系统采购项目公开招标公告",
+    "pub_date": "2022-11-24"
+  },
+  {
+    "url": "../34/14627.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学精神卫生中心采购社会评价服务招标项目（第二次）更正公告（招标编号：0724-2230ST395948）",
+    "pub_date": "2022-11-24"
+  },
+  {
+    "url": "../34/14626.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第一附属医院床单位臭氧消毒机项目招标公告",
+    "pub_date": "2022-11-24"
+  },
+  {
+    "url": "../34/14625.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第二附属医院1号大楼9楼东区公卫及库房改造项目竞价公告",
+    "pub_date": "2022-11-24"
+  },
+  {
+    "url": "../34/14624.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第二附属医院中央空调风冷冷水机组更新项目招标结果公示",
+    "pub_date": "2022-11-23"
+  },
+  {
+    "url": "../34/14623.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院第二附属医院定制实验台及配套装置采购项目招标结果公示",
+    "pub_date": "2022-11-23"
+  },
+  {
+    "url": "../34/14622.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学·香港中文大学联合汕头国际眼科中心眼科532激光仪采购项目中标公告",
+    "pub_date": "2022-11-23"
+  },
+  {
+    "url": "../34/14621.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学·香港中文大学联合汕头国际眼科中心眼科手术显微镜（前段手术专用1）采购项目招标公告",
+    "pub_date": "2022-11-23"
+  },
+  {
+    "url": "../34/14620.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学·香港中文大学联合汕头国际眼科中心眼科手术显微镜（后段手术专用）采购项目招标公告",
+    "pub_date": "2022-11-23"
+  },
+  {
+    "url": "../34/14619.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学医学院教学楼及科研大楼的教室、实验室及会议室升级改造项目招标公告",
+    "pub_date": "2022-11-22"
+  },
+  {
+    "url": "../34/14618.html",
+    "encoding": "utf-8",
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "title": "汕头大学精神卫生中心采购社会评价服务招标项目更正公告（招标编号：0724-2230ST395948）",
+    "pub_date": "2022-11-22"
+  }
+]
+Tue Nov 29 10:08:26 2022:	pid: 20256 site_id=991  XTC_MOD_NEXT_PAGE_FIX_URL set start_page=140 for 140 - 0 + 10
+Tue Nov 29 10:08:26 2022:	pid: 20256 site_id=991  XTC_MOD_NEXT_PAGE_FIX_URL info={
+  "total_page": 140
+}
+Tue Nov 29 10:08:26 2022:	pid: 20256 site_id=991  XTC_MOD_NEXT_PAGE_FIX_URL (140/140) next_reqs=[
+  {
+    "purl": "http://www.med.stu.edu.cn/34/list_34_1.html",
+    "url": "http://www.med.stu.edu.cn/34/list_34_140.html"
+  }
+]
+Tue Nov 29 10:08:26 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD doc {'url': '../34/14634.html', 'encoding': 'utf-8', 'purl': 'http://www.med.stu.edu.cn/34/list_34_1.html', 'title': '汕头大学医学院第二附属医院玻璃雨蓬钢结构维护项目招标公告', 'pub_date': '2022-11-25', 'site_id': 991, 'sub_id': 991, 'url_key': '1e2a0351e06a96dbedbbf9d5b4d0a14d', 'site_para': {'province': '', 'city': '', 'stage': ''}}
+Tue Nov 29 10:08:26 2022:	pid: 20256 site_id=991  XTC_TASK_STD request_url http://www.med.stu.edu.cn/34/14634.html
+Tue Nov 29 10:08:31 2022:	pid: 20256 site_id=991  end get 200 text 29636 http://www.med.stu.edu.cn/34/14634.html
+Tue Nov 29 10:08:31 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD add content http://www.med.stu.edu.cn/34/14634.html 汕头大学医学院第二附属医院玻璃雨蓬钢结构维护项目招标公告
+Tue Nov 29 10:08:31 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD save {'url': 'http://www.med.stu.edu.cn/34/14634.html', 'encoding': 'utf-8', 'purl': 'http://www.med.stu.edu.cn/34/list_34_1.html', 'title': '汕头大学医学院第二附属医院玻璃雨蓬钢结构维护项目招标公告', 'pub_date': '2022-11-25', 'site_id': 991, 'sub_id': 991, 'url_key': '1e2a0351e06a96dbedbbf9d5b4d0a14d', 'site_para': {'province': '', 'city': '', 'stage': ''}} fails=[]
+Tue Nov 29 10:08:31 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD doc {'url': '../34/14633.html', 'encoding': 'utf-8', 'purl': 'http://www.med.stu.edu.cn/34/list_34_1.html', 'title': '汕头大学医学院第二附属医院麻醉呼吸回路消毒系统采购项目招标公告', 'pub_date': '2022-11-25', 'site_id': 991, 'sub_id': 991, 'url_key': 'd6bff884f1cc4f1a1c565f356ff1f0d3', 'site_para': {'province': '', 'city': '', 'stage': ''}}
+Tue Nov 29 10:08:31 2022:	pid: 20256 site_id=991  XTC_TASK_STD request_url http://www.med.stu.edu.cn/34/14633.html
+Tue Nov 29 10:08:36 2022:	pid: 20256 site_id=991  end get 200 text 30330 http://www.med.stu.edu.cn/34/14633.html
+Tue Nov 29 10:08:36 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD add content http://www.med.stu.edu.cn/34/14633.html 汕头大学医学院第二附属医院麻醉呼吸回路消毒系统采购项目招标公告
+Tue Nov 29 10:08:36 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD save {'url': 'http://www.med.stu.edu.cn/34/14633.html', 'encoding': 'utf-8', 'purl': 'http://www.med.stu.edu.cn/34/list_34_1.html', 'title': '汕头大学医学院第二附属医院麻醉呼吸回路消毒系统采购项目招标公告', 'pub_date': '2022-11-25', 'site_id': 991, 'sub_id': 991, 'url_key': 'd6bff884f1cc4f1a1c565f356ff1f0d3', 'site_para': {'province': '', 'city': '', 'stage': ''}} fails=[]
+Tue Nov 29 10:08:36 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD doc {'url': '../34/14631.html', 'encoding': 'utf-8', 'purl': 'http://www.med.stu.edu.cn/34/list_34_1.html', 'title': '汕头大学医学院第二附属医院采购结算审核招标项目(0724-2230ST645724)中标候选人公示', 'pub_date': '2022-11-25', 'site_id': 991, 'sub_id': 991, 'url_key': '10dde11a83e1b11318c2d2b14790ce68', 'site_para': {'province': '', 'city': '', 'stage': ''}}
+Tue Nov 29 10:08:36 2022:	pid: 20256 site_id=991  XTC_TASK_STD request_url http://www.med.stu.edu.cn/34/14631.html
+Tue Nov 29 10:08:41 2022:	pid: 20256 site_id=991  end get 200 text 24833 http://www.med.stu.edu.cn/34/14631.html
+Tue Nov 29 10:08:41 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD add content http://www.med.stu.edu.cn/34/14631.html 汕头大学医学院第二附属医院采购结算审核招标项目(0724-2230ST645724)中标候选人公示
+Tue Nov 29 10:08:41 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD save {'url': 'http://www.med.stu.edu.cn/34/14631.html', 'encoding': 'utf-8', 'purl': 'http://www.med.stu.edu.cn/34/list_34_1.html', 'title': '汕头大学医学院第二附属医院采购结算审核招标项目(0724-2230ST645724)中标候选人公示', 'pub_date': '2022-11-25', 'site_id': 991, 'sub_id': 991, 'url_key': '10dde11a83e1b11318c2d2b14790ce68', 'site_para': {'province': '', 'city': '', 'stage': ''}} fails=[]
+Tue Nov 29 10:08:42 2022:	pid: 20256 site_id=991  XTC_MOD_CONTENT_STD doc {'url': '../34/14630.html', 'encoding': 'utf-8', 'purl': 'http://www.med.stu.edu.cn/34/list_34_1.html', 'title': '汕头大学医学院第二附属医院采购预算审核招标项目(0724-2230ST645714)中标候选人公示', 'pub_date': '2022-11-25', 'site_id': 991, 'sub_id': 991, 'url_key': 'f07b31ab45011c8aa383b167a33bdf92', 'site_para': {'province': '', 'city': '', 'stage': ''}}
+Tue Nov 29 10:08:42 2022:	pid: 20256 site_id=991  XTC_TASK_STD request_url http://www.med.stu.edu.cn/34/14630.html

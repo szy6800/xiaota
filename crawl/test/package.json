@@ -1,0 +1,170 @@
+ {
+            "task_module": "XTC_TASK_STD",
+            "site_para": {
+                "province": "河北省",
+                "city": "",
+                "stage": ""
+            },
+            "page_list": {
+                "module_name": "XTC_MOD_PAGE_LIST_A",
+                "module_para": {
+                    "req": {
+                        "url": "https://www.hbggzyfwpt.cn/jyxx/zfcg/cggg",
+                        "encoding": "utf-8",
+                        "method": "post",
+                        "data": {
+                            "currentPage": "1",
+                            "area": "000",
+                            "industriesTypeCode": "",
+                            "scrollValue": "0",
+                            "bulletinTitle": "",
+                            "purchaserMode": "99",
+                            "purchaserModeType": "0",
+                            "publishTimeType": "4",
+                            "publishTimeStart": "2021-01-01",
+                            "publishTimeEnd": "2022-05-21"
+                        },
+                        "headers": {
+                            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                            "Accept-Encoding": "gzip, deflate, br",
+                            "Accept-Language": "zh-CN,zh;q=0.9",
+                            "Cache-Control": "max-age=0",
+                            "Connection": "keep-alive",
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "Cookie": "HUBEI_HOME=31858a64-6222-4334-9942-b0ff853e1b73",
+                            "Host": "www.hbggzyfwpt.cn",
+                            "Origin": "https://www.hbggzyfwpt.cn",
+                            "Referer": "https://www.hbggzyfwpt.cn/jyxx/zfcg/cggg",
+                            "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"101\", \"Google Chrome\";v=\"101\"",
+                            "sec-ch-ua-mobile": "?0",
+                            "sec-ch-ua-platform": "\"Windows\"",
+                            "Sec-Fetch-Dest": "document",
+                            "Sec-Fetch-Mode": "navigate",
+                            "Sec-Fetch-Site": "same-origin",
+                            "Sec-Fetch-User": "?1",
+                            "Upgrade-Insecure-Requests": "1",
+                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36"
+                        }
+                    },
+                    "rule": {
+                        "pick": {
+                            "type": "xpath",
+                            "pattern": "//div[@class=\"newListwenzi\"]/table/tr",
+                            "sub": {
+                                "actions": [
+                                    {
+                                        "type": "set_value",
+                                        "key": "docs.+.url",
+                                        "expr": "str(values['xdata'].xpath('./td[1]/a/@href')[0])"
+                                    },
+                                    {
+                                        "type": "set_value",
+                                        "key": "docs.-1.purl",
+                                        "expr": "obj['now_req']['url']"
+                                    },
+                                    {
+                                        "type": "set_value",
+                                        "key": "docs.-1.title",
+                                        "expr": "str(values['xdata'].xpath('./td[1]/a/text()')[0].strip())"
+                                    },
+                                    {
+                                        "type": "set_value",
+                                        "key": "docs.-1.pub_date",
+                                        "expr": "str(values['xdata'].xpath('./td[2]/text()')[0].strip())"
+                                    },
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "next_page": {
+                    "module_name": "XTC_MOD_NEXT_PAGE_FIX_URL",
+                    "module_para": {
+                        "expr": "'https://www.hbggzyfwpt.cn/jyxx/zfcg/cggg'",
+                        "post_para":{
+                                "currentPage": "1",
+                                "area": "000",
+                                "industriesTypeCode": "",
+                                "scrollValue": "1016",
+                                "bulletinTitle": "",
+                                "purchaserMode": "99",
+                                "purchaserModeType": "0",
+                                "publishTimeType": "4",
+                                "publishTimeStart": "2021-01-01",
+                                "publishTimeEnd": "2022-05-21"
+                            },
+                        "method":"post",
+                        "post_key":"data",
+                        "req_expr": "simple_set_key_value(data,'currentPage',page)",
+                        "rule": {
+                            "pick": {
+                                "type": "re",
+                                "pattern": "<span class=\"dian\">共(\\d+)页，当前为第\d+页</span>",
+                                "sub": {
+                                    "actions": [
+                                        {
+                                            "type": "set_value",
+                                            "key": "info.total_page",
+                                            "expr": "int(values['values'])"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+            "content": {
+                "module_para": {
+                    "req":{
+                        "url":"https://www.hbggzyfwpt.cn/jyxxAjax/zfcg/zfcgCgggLiDetail",
+                        "method":"post"
+                    },
+                  "rules": [
+                    {
+                      "picks": [
+                        {
+                          "type": "xpath",
+                          "pattern": "//input[@id='purchaseProjectCode']",
+                            
+                            
+                          "sub": {
+                            "actions": [
+                              {
+                                "key": "reqs.+.url",
+                                "type": "set_value",
+                                "expr": "'values['xdata'].attrib['href']'"
+                              },
+                              {
+                                "key": "reqs.-1.purl",
+                                "type": "set_value",
+                                "expr": "obj['now_req']['url']"
+                              },
+                            {
+                                "key": "reqs.-1.no_request",
+                                "type": "set_value",
+                                "expr": "1"
+
+                            },
+                            {
+                                "key": "reqs.-1.text",
+                                "type": "set_value",
+                                "expr": "bulletinContent"
+
+                            },
+                                {
+                                    "key": "reqs.-1.ctype",
+                                    "type": "set_value",
+                                    "expr": "json"
+
+                                }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                    ]
+                },
+                "module_name": "XTC_MOD_CONTENT_STD"
+                }
+            }

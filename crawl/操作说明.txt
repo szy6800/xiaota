@@ -1,0 +1,220 @@
+一，请求req:
+    每个请求为一个dict, 可以包含
+    url 请求链接
+    purl 父页面链接
+    method 目前支持get 和 post
+    json  对应post时request的参数
+    data  对应post时request的参数
+    files  对应request的参数
+    verify  对应request的参数
+    params  对应request的参数
+    cookies  对应request的参数
+    headers 在基本header的基础上， 补充header
+    encoding  可以对结果字符集设定
+    no_request  如果出现此参数， 则不发起请求， 并伪造一个返回， 用入口参数的text字段作为返回结果
+    
+
+    注意上面的参数除url外均为可选
+
+二、规则：
+    每个规则可以包含:
+    url_filter  若入口数据中包含url, 且url符合正则匹配re.search(,,re.M|re.I)则继续处理
+    not_url_filter  若入口数据中包含url, 且url不符合正则匹配re.search(,,re.M|re.I)则继续处理
+    filter  若入口数据中的text符合正则匹配re.search(,,re.M|re.I)则继续处理
+    not_filter  若入口数据中的text不符合正则匹配re.search(,,re.M|re.I)则继续处理
+    action_filter 一个条件表达式， 可用参数为values（和后面的action一样），如果条件不满足，则不执行后面的action和actions
+    actions  为一个数组， 数组中的每一项为一个action
+    action  为一个操作动作，包含:
+            filter  若入口数据中的text符合正则匹配re.search(,,re.M|re.I)则执行动作
+            type  动作类型 目前只支持 set_value, 
+            key   填充路径
+            expr  填充值的计算表达式
+    picks   为一个数组， 数组中，每一项为一个pick
+    pick  为一个拆分规则， 包含
+            filter  若入口数据中的text符合正则匹配re.search(,,re.M|re.I)则执行拆分
+            type    待拆分数据解析方式， 目前支持 soup, json, re, xpath, expr
+            pattern 拆分条件
+            re_index 若拆分方式为 re,  按拆分条件有多个捕捉项， re_index可以指定捕捉结果序号， 缺省为0
+            re_flag  正则表达式的flag = re.M|re.I|re_flag, 缺省为0， 若要支持re.DOTALL, 则此值填16
+            sub   规则， 对每个拆分结果进行处理
+    
+    注意， 以上各个部分均为可选项
+
+三、模块逻辑：
+    1、任务模块 XTC_TASK_STD
+       初始化：
+            定义基本headers = {
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'Accept-Language': 'zh-CN,zh;q=0.9',
+                    'Cache-Control': 'max-age=0',
+                    'Connection': 'keep-alive',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36'
+                }
+                如果模块配置参数中有request_headers， 则补充到基本headers中
+                如果模块配置参数中有request_interval则按次设置请求间隔时间， 目前代码中缺省2秒
+                如果模块配置参数中有request_retry_times则按此设置请求重试次数， 缺省3次
+                如果模块配置参数中有max_allow_fail_count则抓取公告的失败次数超过此值任务异常， 缺省0次
+                load_from_parent: 可选配置, 当base_site_id！=0 且此值为true， 就加载 site_id=base_site_id的配置
+                如果模块配置参数中有hash_mod， 格式样例为 [10, 1], 表示doc_key的最后4位转数字后对10取模等于1的情况才处理
+                如果模块配置参数中有proxy_key，格式为字符串， 则用此值取tb_proxy取最新的一条记录的proxies作为代理配置
+                如果模块配置参数中有dup_flag(缺省为0)， 如果dup_flag！=0， 则对已经采集过的公告， 继续采集，然后采集结果和数据库中已经存在的信息合并，在更新到库中
+        运行时：
+            1. 设置环境变量， 其中reqs, next_reqs, docs数组为空, run_times=0
+            2. 设置环境变量 docs数组为空, run_times +=1
+            3. 调用公告提取模块
+            4. 调用翻页模块
+            6. 对docs数组中的每一项doc：
+                   若模块参数设置了url_key_expr， 则调用eval(url_key_expr)得到一个字符串，用这个字符串的md5计算url_key,
+                   注意url_key_expr中可用的数据为doc内的数据， 例如url_key_expr='url', 就是返回url和缺省情况一样， 
+                      否则直接根据url的md5计算url_key
+                   根据url_key判断是否已经抓取
+                   对为抓取的url， 调用 公告下载模块 处理
+            7. 更新tb_site表的 state_info
+            8. 如果模块配置参数中有stop_filter, 则判断本次抓取是否结束
+            9. 若next_reqs数组为空， 则结束本次抓取
+            10. 清空reqs数组
+            11. 返回前面步骤2， 继续操作
+            
+        如果模块配置参数中有write_db_log, 则处理过程中的日志可以写入数据库表， 在界面查看
+        如果模块配置参数中有http2， 则采用httpx的http2进行请求处理
+        
+    2、公告链接提取模块 XTC_MOD_PAGE_LIST_A
+       初始化：
+
+       运行：
+            1. 若首次运行， 则把模块配置参数中的req配置放入reqs数组
+            2. 若不是首次运行， 清空reqs数组， 把next_reqs数组中项放入reqs数组， 清空ext_reqs数组
+            3. 对reqs数组中的每一项， 进行页面抓取，并调用规则（rule, rules配置参数）， 规则负责填充docs数组
+       
+    3、固定页码翻页模块 XTC_MOD_NEXT_PAGE_FIX_URL
+       初始化：
+            如果模块配置参数中有 order 则设置order， 缺省为 desc
+            re_crawl_page_num 为冗余抓取的页数， 缺省为10页
+       运行：
+            1. 若模块配置中有rule或rules配置，
+                则对当前环境中的reqs数组结果调用规则（rule, rules配置参数）， 规则负责获取总页码
+                总页码需要放入环境中的 info['total_page']
+            2. 若order=asc则当前页码page=run_times
+               若order=desc,则结合tb_site表中的crawl_para的succ_page计算当前页码（从尾页开始）
+            3. 产生下一页请求， 放入next_reqs数组
+               从模块配置参数中获取 prefix, 缺省为 ''
+               从模块配置参数中获取 postfix, 缺省为 ''
+               从模块配置参数中获取 expr, 此参数必须有，其中可以使用page参数
+               设置请求 url = prefix + expr结果 + postfix
+               设置请求 purl 为 reqs数组中的第一项的url
+               根据  purl 修正 url
+               若模块配置参数中有method, 则设置请求的method
+               若模块配置参数中有req_para， 则req_para中的内容， 将填充到请求中, 可以在其中设置encoding， headers等内容
+               若method为post, 则读取模块配置参数中post_key 和 post_para， 设置post参数
+               post_key 为 'json'或'data'
+
+    3A、固定页码翻页模块 XTC_MOD_NEXT_PAGE_FIX_URL_NEW
+       此模块和XTC_MOD_NEXT_PAGE_FIX_URL基本相同， 只是下一页链接的产生方式用next_rule(或next_rules)来产生
+
+       初始化：
+            如果模块配置参数中有 order 则设置order， 缺省为 desc
+            re_crawl_page_num 为冗余抓取的页数， 缺省为10页
+       运行：
+            1. 若模块配置中有rule或rules配置，
+                则对当前环境中的reqs数组结果调用规则（rule, rules配置参数）， 规则负责获取总页码
+                总页码需要放入环境中的 info['total_page']
+            2. 若order=asc则当前页码page=run_times
+               若order=desc,则结合tb_site表中的crawl_para的succ_page计算当前页码（从尾页开始）
+            3. 产生下一页请求， 放入next_reqs数组
+               若模块配置有next_rule(或next_rules)， 则执行此规则， 此规则负责向next_reqs中添加请求
+               如果模块配置中有expr, 也可以用这个表达式直接返回一个req， 程序会把这个req放入next_reqs中
+       例子：
+                     "next_page": {
+                        "module_name": "XTC_MOD_NEXT_PAGE_FIX_URL_NEW",
+                        "module_para": {
+                           "rule": {
+                              "pick": {
+                                 "type": "re",
+                                 "pattern": "size:([ \\d]+),.*\\n.*current:([ \\d]+),",
+                                 "sub": {
+                                    "actions": [
+                                       {
+                                          "type": "set_value",
+                                          "key": "info.curr_page",
+                                          "expr": "int(values['values'][1])"
+                                       },
+                                       {
+                                          "type": "set_value",
+                                          "key": "info.total_page",
+                                          "expr": "int(values['values'][0])"
+                                       }
+                                    ]
+                                 }
+                              }
+                           },
+                           "next_rule": {
+                              "actions": [
+                                 {
+                                    "type": "set_value",
+                                    "key": "next_reqs.+.url",
+                                    "expr": "'http://search.ccgp.gov.cn/bxsearch?searchtype=1&page_index=' + str(obj['info']['next_page']) + '&bidSort=1&buyerName=&projectId=&pinMu=0&bidType=0&dbselect=bidx&kw=&start_time=2021%3A12%3A30&end_time=2022%3A04%3A01&timeType=4&displayZone=&zoneId=&pppStatus=0&agentName='"
+                                 },
+                                 {
+                                    "type": "set_value",
+                                    "key": "next_reqs.-1.purl",
+                                    "expr": "obj['now_req']['url']"
+                                 }
+                              ]
+                           }
+                        }
+                     }
+
+
+       
+       
+    4、页面提取翻页模块 XTC_MOD_NEXT_PAGE_URL
+       初始化：
+
+       运行：
+           1. 则对当前环境中的reqs数组结果执行规则（rule, rules配置参数）, 规则负责产生next_reqs数组
+           2. 若next_reqs中新产生的翻页链接是否和reqs数组中的一样， 一样则丢弃
+       
+    5、公告下载模块  XTC_MOD_CONTENT_STD
+       初始化：
+           
+       运行：
+           1. 根据入口数据(即docs数组中的一项)， 建立 reqs数组, 把入口数据放入， 作为第一个请求
+              若入口中有req或reqs(req的数组形式), 则把这些请求也加入 reqs数组
+           2. 对 reqs数组的每项， 进行页面抓取
+              除了第一个请求， 其它的请求允许配置allow_error_level 参数， 缺省为0
+              allow_error_level =0 不运行请求失败， 1 允许请求返回非200， 2 允许请求发生异常
+              允许发生异常的请求， 会在tb_doc中把url存入 fails数组中
+           3. 若页面结果为html，或请求参数中ctype=json, 则把此结果放入contents数组，并调用规则处理内容
+              其它页面结果放入attachments数组
+              对结果内容， 根据check_rules的配置进行内容检测
+           4. 规则处理， 规则负责对reqs数组进行增加
+           5. 若reqs还有未处理的， 进行步骤2
+           6. 保存结果， 页面结果按md5存入文件系统， 公告整体信息存入tb_doc表
+
+    6. 旧框架数据导入模块：
+       配置样例：
+       {
+        "task_module": "XTC_TASK_MONGO",
+        "db_name": "Bidding_data",
+        "table_name": "zzzyzbcom_henan_zhenzhou",
+        "attachment_table_name": "zzzyzbcom_henan_zhenzhou_attachment",
+        "stop_filter": "total_count>10"
+       }
+
+       上面参数中：
+         db_name： mongo的数据库名， 可以不配置， 缺省为Bidding_data
+         table_name： 具体的mongo表名， 必须配置的参数
+         attachment_table_name： 具体的mongo附件表名， 可以不配置， 缺省为 table_name + '_attachment'
+         stop_filter: 停止条件， 可以不配置
+       
+四、内容检查规则：
+    url_filter  内容url符合正则匹配re.search(,,re.M|re.I)则继续处理
+    not_url_filter  内容url不符合正则匹配re.search(,,re.M|re.I)则继续处理
+    type_filter  可选值content|attachment, 表示此规则只对内容或附件生效
+
+    error_reg  一个正则数组， 若数组中每个正则都满足re.search(,,re.M|re.I)，则此页面失败
+    succ_reg   一个正则数组， 若数组中任何一个正则不满足re.search(,,re.M|re.I)，则此页面失败
+    error_soup  一个soup表达式数组， 若数组中每个表达式都有结果，则此页面失败
+    succ_soup   一个soup表达式数组， 若数组中任何一个表达式没有结果，则此页面失败
+    min_size     若内容长度小于次值， 则页面失败
