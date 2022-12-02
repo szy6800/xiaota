@@ -54,15 +54,12 @@ def eval_string():
     try:
         # 这一段是将成功页数置为空，避免了每次新网站的页数累加
         db_cur.execute(
-            "UPDATE tb_site SET crawl_para = '{}'  WHERE site_id = 991"
+            "UPDATE tb_site SET crawl_para = '{}'  WHERE site_id = 137"
         )
         db_conn.commit()
     finally:
         db_cur.close()
         db_conn.close()
-
-
-
 
 
 if __name__ == '__main__':
@@ -75,28 +72,24 @@ if __name__ == '__main__':
                 "city": "",
                 "stage": ""
             },
-            # "dup_flag": 2,
-            "start_pub_date": "2021-01-01",
-            "proxy_key": "79",
-            "max_allow_fail_count": 30,
+            "dup_flag": 2,
             "page_list": {
                 "module_name": "XTC_MOD_PAGE_LIST_A",
                 "module_para": {
                     "req": {
-                        "url": "http://www.miluo.gov.cn/25221/25242/25243/default.htm",
+                        "url": "http://fhq.zfzbw.cn/zhaobiao/",
                         "encoding": "utf-8"
                     },
                     "rule": {
                         "pick": {
-
                             "type": "xpath",
-                            "pattern": "//div[@class=\"list_center2\"]//div[@class=\"list_center_art_title1\"]",
+                            "pattern": "//*[@class=\"e-gr-w3-dn sub-mip-main\"]/div[contains(@class,'content')]",
                             "sub": {
                                 "actions": [
                                     {
                                         "type": "set_value",
                                         "key": "docs.+.url",
-                                        "expr": "str(values['xdata'].xpath(\"./a/@href\")[0])"
+                                        "expr": "str(values['xdata'].xpath(\".//a/@href\")[0])"
                                     },
                                     {
                                         "type": "set_value",
@@ -111,12 +104,12 @@ if __name__ == '__main__':
                                     {
                                         "type": "set_value",
                                         "key": "docs.-1.title",
-                                        "expr": "str(values['xdata'].xpath('./a/@title')[0])"
+                                        "expr": "str(values['xdata'].xpath(\".//a/@title\")[0])"
                                     },
                                     {
                                         "type": "set_value",
                                         "key": "docs.-1.pub_date",
-                                        "expr": "str(values['xdata'].xpath('.//span[@class=\"posttime\"]/text()')[0])"
+                                        "expr": "str(values['xdata'].xpath('.//a/preceding::i[1]/text()')[0])"
                                     }
                                 ]
                             }
@@ -124,64 +117,69 @@ if __name__ == '__main__':
                     }
                 }
             },
-            # "next_page": {
-            #     "module_name": "XTC_MOD_NEXT_PAGE_FIX_URL",
-            #     "module_para": {
-            #         "prefix": "http://www.med.stu.edu.cn/34/list_34_",
-            #         "expr": "int('%d'%(page))",
-            #         "postfix": ".html",
-            #         "rule": {
-            #             "pick": {
-            #                 "type": "re",
-            #                 "pattern": "turnPage\('34','(\d+)','.html'",
-            #                 "sub": {
-            #                     "actions": [
-            #                         {
-            #                             "type": "set_value",
-            #                             "key": "info.total_page",
-            #                             "expr": "int(values['values'])"
-            #                         }
-            #                     ]
-            #                 }
-            #             }
-            #         }
-            #     }
-            # },
-            # "content": {
-            #     "module_para": {
-            #         "rules": [
-            #             {
-            #                 "picks": [
-            #                     {
-            #                         "type": "xpath",
-            #                         "pattern": "//a[contains(text(), '.PDF') or contains(text(), '.JPEG') or contains(text(), '.JPG') or contains(text(), '.RAR') or contains(text(), '.DOCX') or contains(text(), '.XLSX') or contains(text(), '.XLS') or contains(text(), '.ZIP') or contains(text(), '.PNG') or contains(text(), '.DOC') or  contains(text(), '.GZSZB') or contains(text(), '.pdf') or contains(text(), '.jpeg') or contains(text(), '.jpg') or contains(text(), '.rar') or contains(text(), '.docx') or contains(text(), '.xlsx') or contains(text(), '.xls') or contains(text(), '.zip') or contains(text(), '.png') or contains(text(), '.doc') or contains(text(), '.GZSZB') or contains(@href,'.pdf') or contains(@href,'.jpeg') or contains(@href,'.jpg') or contains(@href,'.rar') or contains(@href,'.docx') or contains(@href,'.xlsx') or contains(@href,'.xls') or contains(@href,'.zip') or contains(@href,'.png') or contains(@href,'.doc') or contains(@href,'.GZSZB') or contains(@href,'.PDF') or contains(@href,'.JPEG') or contains(@href,'.JPG') or contains(@href,'.RAR') or contains(@href,'.DOCX') or contains(@href,'.XLSX') or contains(@href,'.XLS') or contains(@href,'.ZIP') or contains(@href,'.PNG') or contains(@href,'.DOC')]",
-            #                         "sub": {
-            #                             "not_filter": "javascript:window.close()|javascript:doPrint()|mailto|javascript:downPList()|javascript:void",
-            #                             "actions": [
-            #                                 {
-            #                                     "key": "reqs.+.url",
-            #                                     "type": "set_value",
-            #                                     "expr": "values['xdata'].attrib['href']"
-            #                                 },
-            #                                 {
-            #                                     "key": "reqs.-1.purl",
-            #                                     "type": "set_value",
-            #                                     "expr": "obj['now_req']['url']"
-            #                                 },
-            #                                 {
-            #                                     "key": "reqs.-1.allow_error_level",
-            #                                     "type": "set_value",
-            #                                     "expr": "2"
-            #                                 }
-            #                             ]
-            #                         }
-            #                     }
-            #                 ]
-            #             }
-            #         ]
-            #     },
-            #     "module_name": "XTC_MOD_CONTENT_STD"
-            # }
+            "next_page": {
+                "module_name": "XTC_MOD_NEXT_PAGE_FIX_URL",
+                "module_para": {
+                    "prefix": "http://fhq.zfzbw.cn/zhaobiao/lists_1_",
+                    "expr": "int('%d'%(page))",
+                    "postfix": ".html",
+                    "rule": {
+                        "pick": {
+                            "type": "expr",
+                            "pattern": "text",
+                            "sub": {
+                                "actions": [
+                                    {
+                                        "type": "set_value",
+                                        "key": "info.total_page",
+                                        "expr": "int(50)"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "content": {
+                "module_para": {
+                    "rules": [
+                        {
+                            "picks": [
+                                {
+                                    "type": "xpath",
+                                    "pattern": "//a[contains(text(), '.PDF') or contains(text(), '.JPEG') or contains(text(), '.JPG') or contains(text(), '.RAR') or contains(text(), '.DOCX') or contains(text(), '.XLSX') or contains(text(), '.XLS') or contains(text(), '.ZIP') or contains(text(), '.PNG') or contains(text(), '.DOC') or  contains(text(), '.GZSZB') or contains(text(), '.pdf') or contains(text(), '.jpeg') or contains(text(), '.jpg') or contains(text(), '.rar') or contains(text(), '.docx') or contains(text(), '.xlsx') or contains(text(), '.xls') or contains(text(), '.zip') or contains(text(), '.png') or contains(text(), '.doc') or contains(text(), '.GZSZB') or contains(@href,'.pdf') or contains(@href,'.jpeg') or contains(@href,'.jpg') or contains(@href,'.rar') or contains(@href,'.docx') or contains(@href,'.xlsx') or contains(@href,'.xls') or contains(@href,'.zip') or contains(@href,'.png') or contains(@href,'.doc') or contains(@href,'.GZSZB') or contains(@href,'.PDF') or contains(@href,'.JPEG') or contains(@href,'.JPG') or contains(@href,'.RAR') or contains(@href,'.DOCX') or contains(@href,'.XLSX') or contains(@href,'.XLS') or contains(@href,'.ZIP') or contains(@href,'.PNG') or contains(@href,'.DOC')]",
+                                    "sub": {
+                                        "not_filter": "javascript:window.close()|javascript:doPrint()|mailto|javascript:downPList()|javascript:void",
+                                        "actions": [
+                                            {
+                                                "key": "reqs.+.url",
+                                                "type": "set_value",
+                                                "expr": "values['xdata'].attrib['href']"
+                                            },
+                                            {
+                                                "key": "reqs.-1.purl",
+                                                "type": "set_value",
+                                                "expr": "obj['now_req']['url']"
+                                            },
+                                            {
+                                                "key": "reqs.-1.allow_error_level",
+                                                "type": "set_value",
+                                                "expr": "2"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "module_name": "XTC_MOD_CONTENT_STD",
+                "start_pub_date": "2021-01-01",
+                "verify": false,
+                "max_allow_fail_count": 30,
+                "request_interval": 10
+
+            }
         }
 
     )
