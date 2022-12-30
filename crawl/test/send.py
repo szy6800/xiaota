@@ -65,106 +65,80 @@ def eval_string():
 if __name__ == '__main__':
     false = False
     send_test(
+
         {
             "task_module": "XTC_TASK_STD",
             "site_para": {
-                "province": "：山东省",
+                "province": "",
                 "city": "",
                 "stage": ""
             },
+            "dup_flag": 2,
             "page_list": {
                 "module_name": "XTC_MOD_PAGE_LIST_A",
                 "module_para": {
                     "req": {
-                        "url": "http://ggzyjyzx.shandong.gov.cn/module/web/jpage/dataproxy.jsp?startrecord=1&endrecord=54&perpage=18&unitid=474655&webid=428&path=http://ggzyjyzx.shandong.gov.cn/&webname=%E5%B1%B1%E4%B8%9C%E7%9C%81%E5%85%AC%E5%85%B1%E8%B5%84%E6%BA%90%E4%BA%A4%E6%98%93%E4%B8%AD%E5%BF%83&col=1&columnid=209488&sourceContentType=1&permissiontype=0",
-                        "encoding": "utf-8",
-                        "method": "post",
-                        "headers": {
-                            "Accept": "application/xml, text/xml, */*; q=0.01",
-                            "Accept-Encoding": "gzip, deflate",
-                            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-                            "Connection": "keep-alive",
-                            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                            "Host": "ggzyjyzx.shandong.gov.cn",
-                            "Origin": "http://ggzyjyzx.shandong.gov.cn",
-                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36 Edg/103.0.1264.49",
-                            "X-Requested-With": "XMLHttpRequest"
-                        },
-                        "data": {
-                            "col": "1",
-                            "webid": "428",
-                            "path": "http://ggzyjyzx.shandong.gov.cn/",
-                            "columnid": "209488",
-                            "sourceContentType": "1",
-                            "unitid": "474655",
-                            "webname": "%E5%B1%B1%E4%B8%9C%E7%9C%81%E5%85%AC%E5%85%B1%E8%B5%84%E6%BA%90%E4%BA%A4%E6%98%93%E4%B8%AD%E5%BF%83",
-                            "permissiontype": "0"
-                        }
+                        "url": "http://shanghai.customs.gov.cn/guiyang_customs/zfxxgk82/3014692/3014739/f27d95ea-1.html",
+                        "encoding": "utf-8"
                     },
-                    "rules": [
-                        {
-                            "pick": {
-                                "type": "xpath",
-                                "pattern": "//recordset/record",
-                                "sub": {
-                                    "not_filter": "1370364_310032240|art_1370364_31003224|art_209488_10389764|art_209488_10378261",
-                                    "actions": [
-                                        {
-                                            "type": "set_value",
-                                            "key": "docs.+.url",
-                                            "expr": "def eval_string(obj, values):\n    if 'http' in str(values['xdata'].xpath('.//a/@href')[0]):\n        return str(values['xdata'].xpath('.//a/@href')[0])\n    else:\n        return 'http://www.zhuji.gov.cn' + str(values['xdata'].xpath('.//a/@href')[0])"
-                                        },
-                                        {
-                                            "type": "set_value",
-                                            "key": "docs.-1.title",
-                                            "expr": "str(values['xdata'].xpath('.//a/@title')[0])"
-                                        },
-                                        {
-                                            "type": "set_value",
-                                            "key": "docs.-1.pub_date",
-                                            "expr": "str(values['xdata'].xpath('.//span/text()')[0]).strip()"
-                                        }
-                                    ]
-                                }
+                    "rule": {
+                        "pick": {
+                            "type": "xpath",
+                            "pattern": "//*[@id=\"list1\"]/li",
+                            "sub": {
+                                "actions": [
+                                    {
+                                        "type": "set_value",
+                                        "key": "docs.+.url",
+                                        "expr": "str(values['xdata'].xpath(\"./a/@href\")[0])"
+                                    },
+                                    {
+                                        "type": "set_value",
+                                        "key": "docs.-1.encoding",
+                                        "expr": "'utf-8'"
+                                    },
+                                    {
+                                        "type": "set_value",
+                                        "key": "docs.-1.purl",
+                                        "expr": "obj['now_req']['url']"
+                                    },
+                                    {
+                                        "type": "set_value",
+                                        "key": "docs.-1.title",
+                                        "expr": "str(values['xdata'].xpath(\".//a/@title\")[0])"
+                                    },
+                                    {
+                                        "type": "set_value",
+                                        "key": "docs.-1.pub_date",
+                                        "expr": "str(values['xdata'].xpath(\".//a/em/text()\")[0])"
+                                    }
+                                ]
                             }
                         }
-                    ]
+                    }
                 }
             },
             "next_page": {
                 "module_name": "XTC_MOD_NEXT_PAGE_FIX_URL",
                 "module_para": {
-                    "prefix": "http://ggzyjyzx.shandong.gov.cn/module/web/jpage/dataproxy.jsp?startrecord=",
-                    "expr": "'%d&endrecord=%d&perpage=18'%(page-53,page)",
-                    "postfix": "&unitid=474655&webid=428&path=http://ggzyjyzx.shandong.gov.cn/&webname=%E5%B1%B1%E4%B8%9C%E7%9C%81%E5%85%AC%E5%85%B1%E8%B5%84%E6%BA%90%E4%BA%A4%E6%98%93%E4%B8%AD%E5%BF%83&col=1&columnid=209488&sourceContentType=1&permissiontype=0",
-                    "method": "post",
-                    "post_para": {
-                        "col": "1",
-                        "webid": "428",
-                        "path": "http://ggzyjyzx.shandong.gov.cn/",
-                        "columnid": "209488",
-                        "sourceContentType": "1",
-                        "unitid": "474655",
-                        "webname": "%E5%B1%B1%E4%B8%9C%E7%9C%81%E5%85%AC%E5%85%B1%E8%B5%84%E6%BA%90%E4%BA%A4%E6%98%93%E4%B8%AD%E5%BF%83",
-                        "permissiontype": "0"
-                    },
-                    "rules": [
-                        {
-                            "pick": {
-                                "type": "xpath",
-                                "pattern": "//totalpage",
-                                "sub": {
-                                    "actions": [
-                                        {
-                                            "type": "set_value",
-                                            "key": "info.total_page",
-                                            "expr": "math.ceil(int(values['xdata'].xpath('./text()')[0])/3)*54"
-                                        }
-                                    ]
-                                }
+                    "prefix": "http://www.sxcczbpt.com/cms/channel/2ywgg4qb/index.htm?pageNo=",
+                    "expr": "int('%d'%(page))",
+                    "postfix": "",
+                    "rule": {
+                        "pick": {
+                            "type": "expr",
+                            "pattern": "text",
+                            "sub": {
+                                "actions": [
+                                    {
+                                        "type": "set_value",
+                                        "key": "info.total_page",
+                                        "expr": "int(10)"
+                                    }
+                                ]
                             }
                         }
-                    ]
+                    }
                 }
             },
             "content": {
@@ -203,10 +177,10 @@ if __name__ == '__main__':
                 "module_name": "XTC_MOD_CONTENT_STD",
                 "start_pub_date": "2021-01-01",
                 "verify": false,
-                "max_allow_fail_count": 150,
+                "max_allow_fail_count": 30,
                 "request_interval": 10
             }
         }
-
     )
+
     eval_string()
